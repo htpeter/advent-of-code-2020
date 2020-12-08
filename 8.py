@@ -19,6 +19,7 @@ class BootLoaderSimulation:
         self.position += cleaned_integer  
 
     def run_instructions(self):
+        self.already_run_calculations = []
         # initialize operation variables
         self.position = 0
         self.accumulator = 0
@@ -28,6 +29,13 @@ class BootLoaderSimulation:
             cmd = self.instructions[self.position]
             s_int = self.signed_integers[self.position]
             c_int = self.clean_signed_integer(s_int)
+            
+            command_hash = hash(f"{self.position}-{cmd}-{c_int}")
+            if command_hash in self.already_run_calculations:
+                raise Exception(f"Repeat execution of step {self.position}-{cmd}-{c_int}, accumulator is {self.accumulator}")
+            else:
+                self.already_run_calculations.append(command_hash)
+
             print(f"running {cmd} {c_int}")
             print(self.position)
             if cmd == "acc":
